@@ -1,17 +1,27 @@
 package io.red;
 
-import org.apache.log4j.Logger;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class PrimeiroTeste {
-    private static final Logger LOGGER = Logger.getLogger(PrimeiroTeste.class.getName());
+@ExtendWith(MockitoExtension.class)
+class PrimeiroTeste {
+
+    @Mock
+    Calculadora calculadora;
+    int numero1 = 10, numero2 = 10;
+
+    @BeforeEach
+    public void setUp() {
+        calculadora = new Calculadora();
+    }
 
     @Test
-    public void deveSomarDoisNumeros() {
-        // cenario
-        Calculadora calculadora = new Calculadora();
-        int numero1 = 10, numero2 = 10;
+    void deveSomarDoisNumeros() {
         // execucao
         int resultado = calculadora.somar(numero1, numero2);
         // verificacoes
@@ -19,59 +29,63 @@ public class PrimeiroTeste {
 
     }
 
-    @Test(expected = RuntimeException.class)
-    public void naoDeveSomarDoisNumerosNegativos() {
-        // cenario
-        Calculadora calculadora = new Calculadora();
-        int numero1 = -0, numero2 = 10;
+    @Test
+    void naoDeveSomarDoisNumerosNegativos() {
+
         // execucao
-        calculadora.somar(numero1, numero2);
+        int numero1 = -10, numero2 = 0;
+
+        org.junit.jupiter.api.Assertions.
+                assertThrows(RuntimeException.class, () -> calculadora.somar(numero1, numero2));
 
     }
 
     @Test
-    public void deveSubtrairDoisNumeros() {
-        Calculadora calculadora = new Calculadora();
-        int numero1 = 10, numero2 = 10;
+    void deveSubtrairDoisNumeros() {
         int resultado = calculadora.subtrair(numero1, numero2);
         Assertions.assertThat(resultado).isEqualTo(0);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void naoDeveSubtrairDoisNumerosIguaisAZeroOuNegativos() {
-        Calculadora calculadora = new Calculadora();
-        int numero1 = -10, numero2 = 10;
-        calculadora.subtrair(numero1, numero2);
+    @Test
+    void naoDeveSubtrairDoisNumerosIguaisAZeroOuNegativos() {
+        int numero1 = -10, numero2 = 0;
+        org.junit.jupiter.api.Assertions
+                .assertThrows(RuntimeException.class,
+                        () -> calculadora.subtrair(numero1, numero2));
     }
 
     @Test
-    public void deveDividirDoisNumerosPositivos() {
-        Calculadora calculadora = new Calculadora();
-        int numero1 = 10, numero2 = 10;
+    void deveDividirDoisNumerosPositivos() {
         int resultado = calculadora.dividir(numero1, numero2);
         Assertions.assertThat(resultado).isEqualTo(1);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void naoDeveDividirDoisNumerosNegativosOuIguaisAzero() {
-        Calculadora calculadora = new Calculadora();
+    @Test
+    @DisplayName("Nao deve dividir dois numeros Negativos ou Iguais a Zero.")
+    void naoDeveDividirDoisNumerosNegativosOuIguaisAzero() {
         int numero1 = -10, numero2 = 10;
-        calculadora.dividir(numero1, numero2);
+        org.junit.jupiter.api.Assertions
+                .assertThrows(RuntimeException.class,
+                        () -> calculadora.dividir(numero1, numero2));
     }
 
     @Test
-    public void deveMultiplicarDoisNumerosPositivos() {
+    @DisplayName("Deve Multiplicar Dois numeros positivos.")
+    void deveMultiplicarDoisNumerosPositivos() {
         Calculadora calculadora = new Calculadora();
         int numero1 = 10, numero2 = 10;
         int resultado = calculadora.multiplicar(numero1, numero2);
         Assertions.assertThat(resultado).isEqualTo(100);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void naoDeveMultiplicarDoisNumerosNegativosOuIguaisAzero() {
+    @Test
+    @DisplayName("Nao deve Multiplicar Numeros negativos ou Iguais a Zero.")
+    void naoDeveMultiplicarDoisNumerosNegativosOuIguaisAzero() {
         Calculadora calculadora = new Calculadora();
         int numero1 = -10, numero2 = 10;
-       calculadora.multiplicar(numero1, numero2);
+        org.junit.jupiter.api.Assertions
+                .assertThrows(RuntimeException.class,
+                        () -> calculadora.multiplicar(numero1, numero2));
     }
 
 }
