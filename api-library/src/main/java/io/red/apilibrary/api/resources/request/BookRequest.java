@@ -1,4 +1,4 @@
-package io.red.apilibrary.api.request;
+package io.red.apilibrary.api.resources.request;
 
 public record BookRequest(
         String title,

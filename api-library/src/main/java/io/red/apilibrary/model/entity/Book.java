@@ -1,4 +1,4 @@
-package io.red.apilibrary.api.entity.model;
+package io.red.apilibrary.model.entity;
 
 import java.util.Objects;
 

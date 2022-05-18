@@ -1,9 +1,8 @@
 package io.red.apilibrary.services;
 
-import io.red.apilibrary.api.model.repository.BookRepository;
+import io.red.apilibrary.model.repository.BookRepository;
 import io.red.apilibrary.api.resources.response.BookResponse;
-import io.red.apilibrary.api.services.BookService;
-import io.red.apilibrary.api.services.impl.BookServiceImpl;
+import io.red.apilibrary.services.impl.BookServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class BookServiceTest {
+class BookServiceTest {
 
     BookService service;
 
