@@ -1,12 +1,21 @@
 package io.red.apilibrary.model.entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table
 public class Book {
 
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String title;
+    @Column
     private String author;
+    @Column
     private String isbn;
 
     public Book() {
