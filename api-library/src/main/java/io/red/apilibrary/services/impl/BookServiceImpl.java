@@ -7,6 +7,8 @@ import io.red.apilibrary.services.BookService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -22,5 +24,10 @@ public class BookServiceImpl implements BookService {
         BeanUtils.copyProperties(request, bookModel);
         return repository.save(bookModel);
 
+    }
+
+    @Override
+    public Optional<Book> getById(Long id) {
+        return Optional.empty();
     }
 }

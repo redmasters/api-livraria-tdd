@@ -21,7 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,6 +70,48 @@ class BookControllerTest {
                 .andExpect(jsonPath("title").value(dto.getTitle()))
                 .andExpect(jsonPath("author").value(dto.getAuthor()))
                 .andExpect(jsonPath("isbn").value(dto.getIsbn()));
+    }
+
+    @Test
+    @DisplayName("Deve obter informacoes de um livro")
+    void getBookDetailsTest() throws Exception {
+        // cenario(given)
+        Long id = 1L;
+        Book book = new Book(
+                id,
+                "As aventuras",
+                "Artur",
+                "1234"
+        );
+        BDDMockito.given(service.getById(id)).willReturn(Optional.of(book));
+
+        // execucao (when)
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API.concat("/" + id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("title").value(book.getTitle()))
+                .andExpect(jsonPath("author").value(book.getAuthor()))
+                .andExpect(jsonPath("isbn").value(book.getIsbn()));
+    }
+
+    @Test
+    @DisplayName("Deve lancar erro quando nao encontrar um livro")
+    void bookNotFound() throws Exception {
+
+        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API.concat("/" + 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -117,5 +162,20 @@ class BookControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value(menssagemErro));
+    }
+
+    @Test
+    @DisplayName("Deve deletar um livro com sucesso")
+    void deleteBookTest() throws Exception{
+
+        BDDMockito.given(service.getById(anyLong()))
+                .willReturn(Optional.of(new Book(1L)));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API.concat("/" + 1));
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isNoContent());
     }
 }
