@@ -26,13 +26,10 @@ class BookRepositoryTest {
     @DisplayName("Deve retornar verdadeiro quando existir um livro na base com isbn informado")
     public void returnTrueWhenIsbnExists() {
         // cenario
-        String isbn = "1234";
-        Book book = new Book(
-                "Aventuras",
-                "Fulano",
-                isbn
-        );
+        String isbn = "123";
+        Book book = createNewBook(isbn);
         testEntityManager.persist(book);
+
         // execucao
         boolean exists = bookRepository.existsByIsbn(isbn);
         // verificacao
@@ -50,5 +47,9 @@ class BookRepositoryTest {
         assertThat(exists).isFalse();
     }
 
+    public static Book createNewBook(String isbn) {
+        Book book = new Book.BookBuilder().title("As aventuras").author("Fulano").isbn(isbn).build();
+        return book;
+    }
 
 }

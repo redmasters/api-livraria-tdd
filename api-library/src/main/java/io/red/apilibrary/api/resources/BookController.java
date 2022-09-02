@@ -8,6 +8,7 @@ import io.red.apilibrary.services.BookService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,34 +21,50 @@ import javax.validation.Valid;
 @RequestMapping("api/books")
 public class BookController {
     private final static Logger log = LoggerFactory.getLogger(BookController.class.getSimpleName());
+    private final ModelMapper modelMapper;
+    private final BookService service;
 
-    BookService service;
-
-    public BookController(BookService service) {
+    public BookController(ModelMapper modelMapper, BookService service) {
+        this.modelMapper = modelMapper;
         this.service = service;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Book createBook(@RequestBody @Valid BookDTO request) {
-        log.info("Book title {} and isnb nr.: {}, CREATED", request.getTitle(), request.getIsbn());
-        return service.save(request);
+    public BookDTO createBook(@RequestBody @Valid BookDTO bookDTO) {
+//        log.info("Book isnb nr.: {}, CREATED",  bookDTO.getIsbn());
+        Book entity = modelMapper.map(bookDTO, Book.class);
+        entity = service.save(entity);
+        return modelMapper.map(entity, BookDTO.class);
     }
 
     @GetMapping("{id}")
-    public BookDTO get(@PathVariable Long id){
-        return service.getById(id)
-                .map(book -> new BookDTO(
-                        book.getId(),
-                        book.getAuthor(),
-                        book.getTitle(),
-                        book.getIsbn()
-                ))
+    public BookDTO get(@PathVariable Long id) {
+        return service
+                .getById(id)
+                .map(book -> modelMapper.map(book, BookDTO.class))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("{id}")
-    public void deleteBook(@PathVariable Long id){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBook(@PathVariable Long id) {
+        Book book = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        service.delete(book);
+
+    }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BookDTO update(@PathVariable Long id, BookDTO bookDTO) {
+        return service.getById(id).map(book -> {
+
+            book.setAuthor(bookDTO.getAuthor());
+            book.setTitle(bookDTO.getTitle());
+            book = service.updateBookBy(book);
+            return modelMapper.map(book, BookDTO.class);
+
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
 

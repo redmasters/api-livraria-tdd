@@ -19,9 +19,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book save(BookDTO request) {
+    public Book save(Book book) {
         var bookModel = new Book();
-        BeanUtils.copyProperties(request, bookModel);
+        BeanUtils.copyProperties(book, bookModel);
         return repository.save(bookModel);
 
     }
@@ -30,4 +30,16 @@ public class BookServiceImpl implements BookService {
     public Optional<Book> getById(Long id) {
         return Optional.empty();
     }
+
+    @Override
+    public void delete(Book book) {
+
+    }
+
+    @Override
+    public Book updateBookBy(Book book) {
+        return null;
+    }
+
+
 }
